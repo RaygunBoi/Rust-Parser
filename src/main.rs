@@ -1,3 +1,10 @@
+use std::env;
+
 fn main() {
-    println!("This is a good place to start... SUCCESS TO ALL!");
+    let args: Vec<String> = env::args().collect();
+    let file_name = &args[1];
+    let language = &args[2];
+
+    println!("{}", file_name);
+    println!("{}", language);
 }
