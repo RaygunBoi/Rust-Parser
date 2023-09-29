@@ -5,6 +5,11 @@ fn main() {
     let file_name = &args[1];
     let language = &args[2];
 
-    println!("{}", file_name);
-    println!("{}", language);
+    if language == "-s" {
+        println!("{}", file_name);
+        println!("{}", language);
+    }
+    else {
+        println!("do something else");
+    }
 }
