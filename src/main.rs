@@ -3,119 +3,316 @@ use std::fs::File;
 use std::io::Read;
 
 fn main() {
+    //Vector of CMD Arguments
     let args: Vec<String> = env::args().collect();
+
+    //File name and language from CMD line
     let file_name = &args[1];
     let language = &args[2];
+
+    //Vector to store temporary words
     let mut temp_vec: Vec<String> = Vec::new();
-    //let tokens: Vec<String> = Vec::new();
 
-    if language == "-s" {
-        println!("; processing input file {}", file_name);
+    //Vector to store tokens
+    let mut tokens: Vec<String> = Vec::new();
 
-        // Read a file in the local file system
-        let mut data_file = File::open(file_name).unwrap();
-        // Create an empty mutable string
-        let mut file_content = String::new();
-        // Copy contents of file to a mutable string
-        data_file.read_to_string(&mut file_content).unwrap();
+    //Lexical and syntax error booleans
+    let mut l_error = false;
+    let s_error = false;
 
-        let mut temp_word = String::new();
-        let mut quote_count = 2;
-        for line in file_content.split("\n") {
-            if temp_word.len() > 0 {
-                temp_vec.push(temp_word);
-            }
-            temp_word = String::new();
-            
-            for current_char in line.chars() {
-                if current_char == ',' && quote_count == 2 {
-                    if temp_word.len() != 0 {
-                        temp_vec.push(temp_word);
-                        temp_word = String::new();
-                    }
-                    let mut comma = String::new();
-                    comma.push(current_char);
-                    temp_vec.push(comma);
-                }
-                else if current_char == '.' && quote_count == 2 {
-                    if temp_word.len() != 0 {
-                        temp_vec.push(temp_word);
-                        temp_word = String::new();
-                    }
-                    let mut period = String::new();
-                    period.push(current_char);
-                    temp_vec.push(period);
-                }
-                else if current_char == '(' && quote_count == 2 {
-                    if temp_word.len() != 0 {
-                        temp_vec.push(temp_word);
-                        temp_word = String::new();
-                    }
-                    let mut l_paren = String::new();
-                    l_paren.push(current_char);
-                    temp_vec.push(l_paren);
-                }
-                else if current_char == ')' && quote_count == 2 {
-                    if temp_word.len() != 0 {
-                        temp_vec.push(temp_word);
-                        temp_word = String::new();
-                    }
-                    let mut r_paren = String::new();
-                    r_paren.push(current_char);
-                    temp_vec.push(r_paren);
-                }
-                else if current_char == ':' && quote_count == 2 {
-                    if temp_word.len() != 0 {
-                        temp_vec.push(temp_word);
-                        temp_word = String::new();
-                    }
-                    let mut colon = String::new();
-                    colon.push(current_char);
-                    temp_vec.push(colon);
-                }
-                else if current_char == '=' && quote_count == 2 {
-                    if temp_word.len() != 0 {
-                        temp_vec.push(temp_word);
-                        temp_word = String::new();
-                    }
-                    let mut equals = String::new();
-                    equals.push(current_char);
-                    temp_vec.push(equals);
-                }
-                else if current_char == '\"' && quote_count == 2 {
-                    if temp_word.len() != 0 {
-                        temp_vec.push(temp_word);
-                        temp_word = String::new();
-                    }
-                    quote_count = quote_count - 1;
-                    temp_word.push(current_char);
-                }
-                else if current_char == '\"' && quote_count == 1 {
-                    temp_word.push(current_char);
+
+    // Read a file in the local file system
+    let mut data_file = File::open(file_name).unwrap();
+
+    // Create an empty mutable string
+    let mut file_content = String::new();
+
+    // Copy contents of file to a mutable string
+    data_file.read_to_string(&mut file_content).unwrap();
+
+    //====================LEXICAL ERROR CHECKING====================\\
+    //For loop to check for lexical errors
+    for current_char in file_content.chars() {
+        if current_char.is_uppercase() {
+            l_error = true;
+            break;
+        }
+        else if current_char == '`' || current_char == '!' 
+        || current_char == '@' || current_char == '#'
+        || current_char == '$' || current_char == '%'
+        || current_char == '^' || current_char == '&'
+        || current_char == '*' || current_char == '-'
+        || current_char == '_' || current_char == '~'
+        || current_char == '+' || current_char == '|'
+        || current_char == '\\' || current_char == '\''
+        || current_char == '/' || current_char == '?'
+        || current_char == '<' || current_char == '>'
+        || current_char == '[' || current_char == ']'
+        || current_char == '{' || current_char == '}' {
+            l_error = true;
+            break;
+        }
+    }
+    //====================LEXICAL ERROR CHECKING====================\\
+
+
+    //=======================TOKEN GENERATING=======================\\
+    //Used to check the current word in the current program line in the second for loop
+    let mut temp_word = String::new();
+
+    //Used to check the number of quotations gone over in the current program line in the second for loop
+    let mut quote_count = 2;
+
+    //For loop used to generate words for the tokens
+    for line in file_content.split("\n") {
+        if temp_word.len() > 0 {
+            temp_vec.push(temp_word);
+        }
+        temp_word = String::new();
+        
+        //For loop that goes through each line in the file and checks every individual character
+        for current_char in line.chars() {
+            //Checks if character is a comma
+            if current_char == ',' && quote_count == 2 {
+                if temp_word.len() != 0 {
                     temp_vec.push(temp_word);
                     temp_word = String::new();
-                    quote_count = quote_count + 1;
                 }
-                else if !current_char.is_whitespace() && quote_count == 2 {
-                    temp_word.push(current_char);
+                let mut comma = String::new();
+                comma.push(current_char);
+                temp_vec.push(comma);
+            }
+            //Checks if character is a period
+            else if current_char == '.' && quote_count == 2 {
+                if temp_word.len() != 0 {
+                    temp_vec.push(temp_word);
+                    temp_word = String::new();
                 }
-                else if quote_count == 1 {
-                    temp_word.push(current_char);
+                let mut period = String::new();
+                period.push(current_char);
+                temp_vec.push(period);
+            }
+            //Checks if character is a left paranthesis
+            else if current_char == '(' && quote_count == 2 {
+                if temp_word.len() != 0 {
+                    temp_vec.push(temp_word);
+                    temp_word = String::new();
+                }
+                let mut l_paren = String::new();
+                l_paren.push(current_char);
+                temp_vec.push(l_paren);
+            }
+            //Checks if character is a right parenthesis
+            else if current_char == ')' && quote_count == 2 {
+                if temp_word.len() != 0 {
+                    temp_vec.push(temp_word);
+                    temp_word = String::new();
+                }
+                let mut r_paren = String::new();
+                r_paren.push(current_char);
+                temp_vec.push(r_paren);
+            }
+            //Checks if character is a colon
+            else if current_char == ':' && quote_count == 2 {
+                if temp_word.len() != 0 {
+                    temp_vec.push(temp_word);
+                    temp_word = String::new();
+                }
+                let mut colon = String::new();
+                colon.push(current_char);
+                temp_vec.push(colon);
+            }
+            //Checks if character is an equals sign
+            else if current_char == '=' && quote_count == 2 {
+                if temp_word.len() != 0 {
+                    temp_vec.push(temp_word);
+                    temp_word = String::new();
+                }
+                let mut equals = String::new();
+                equals.push(current_char);
+                temp_vec.push(equals);
+            }
+            //Checks if character is a quotation mark
+            else if current_char == '\"' && quote_count == 2 {
+                if temp_word.len() != 0 {
+                    temp_vec.push(temp_word);
+                    temp_word = String::new();
+                }
+                quote_count = quote_count - 1;
+                temp_word.push(current_char);
+            }
+            //Checks for the second quotation mark
+            else if current_char == '\"' && quote_count == 1 {
+                temp_word.push(current_char);
+                temp_vec.push(temp_word);
+                temp_word = String::new();
+                quote_count = quote_count + 1;
+            }
+            //Checks if character is a whitespace
+            else if !current_char.is_whitespace() && quote_count == 2 {
+                temp_word.push(current_char);
+            }
+            //Checks for anything else
+            else if quote_count == 1 {
+                temp_word.push(current_char);
+            }
+        }
+    }
+        
+    let mut index = 0;
+    for element in &temp_vec {
+        if element == "data" {
+            tokens.push("DATA".to_string());
+        }
+        else if element == "input" {
+            tokens.push("INPUT".to_string());
+        }
+        else if element == "process" {
+            tokens.push("PROCESS".to_string());
+        }
+        else if element == "output" {
+            tokens.push("OUTPUT".to_string());
+        }
+        else if element == "end" {
+            tokens.push("END".to_string());
+        }
+        else if element == "true" {
+            tokens.push("TRUE".to_string());
+        }
+        else if element == "false" {
+            tokens.push("FALSE".to_string());
+        }
+        else if element == "read" {
+            tokens.push("READ".to_string());
+        }
+        else if element == ":" {
+            tokens.push("COLON".to_string());
+        }
+        else if element == "," {
+            tokens.push("COMMA".to_string());
+        }
+        else if element == "." {
+            tokens.push("PERIOD".to_string());
+        }
+        else if element == "(" {
+            tokens.push("LPAREN".to_string());
+        }
+        else if element == ")" {
+            tokens.push("RPAREN".to_string());
+        }
+        else if element == "=" {
+            tokens.push("ASSIGN".to_string());
+        }
+        else if element == "vector" {
+            tokens.push("VECTOR".to_string());
+        }
+        else if element == "number" {
+            tokens.push("NUMBER".to_string());
+        }
+        else if element == "regressiona" {
+            tokens.push("REGRESSIONA".to_string());
+        }
+        else if element == "regressionb" {
+            tokens.push("REGRESSIONB".to_string());
+        }
+        else if element == "mean" {
+            tokens.push("MEAN".to_string());
+        }
+        else if element == "stddev" {
+            tokens.push("STDDEV".to_string());
+        }
+        else if element == "correlation" {
+            tokens.push("CORRELATION".to_string());
+        }
+        else {
+            for c in element.chars() {
+                if c.is_numeric() {
+                    let mut num: String = "NUM ".to_owned();
+                    let add: &str = element;
+                    num.push_str(add);
+                    tokens.push(num);
+                    break;
+                }
+                else if c == '\"' {
+                    let mut string: String = "STRING ".to_owned();
+                    let add: &str = element;
+                    string.push_str(add);
+                    tokens.push(string);
+                    break;
+                }
+                else {
+                    let mut id: String = "ID ".to_owned();
+                    let add: &str = element;
+                    id.push_str(add);
+                    tokens.push(id);
+                    break;
                 }
             }
         }
+        index = index + 1;
+    }
+    //=======================TOKEN GENERATING=======================\\
 
-        let mut count = 1;
-        for element in &temp_vec {
-            print!("{}", count);
-            print!(": ");
-            println!("{}", element); 
-            count = count + 1;
+
+    //=====================SYNTAX ERROR CHECKING=====================\\
+
+    //=====================SYNTAX ERROR CHECKING=====================\\
+
+
+    //Checks if the program is to be written in scheme
+    if language == "-s" {
+        //Processing file statement
+        println!("; processing input file {}", file_name);
+
+        //Checks for lexical error
+        if l_error {
+            println!("; Lexical error found, stopping program");
         }
-        println!("Vector Size: {}", temp_vec.len());
+        //Checks for syntax error
+        else if s_error {
+            println!("; Syntax error found, stopping program");
+        }
+        //If no lexical or syntax errors, run program
+        else {
+            //Starting statement
+            println!("; Lexical and Syntax analysis passed");
+
+            let mut count = 1;
+            for element in &tokens {
+                print!("{}", count);
+                print!(": ");
+                println!("{}", element); 
+                count = count + 1;
+            }
+            println!("Vector Size: {}", tokens.len());
+        }
     }
     else if language == "-p" {
+        //Processing file statement
         println!("/* processing input file {}", file_name);
+
+        //Checks for lexical error
+        if l_error {
+            println!("   Lexical error found, stopping program */");
+        }
+        //Checks for syntax error
+        else if s_error {
+            println!("   Syntax error found, stopping program */");
+        }
+        //If no lexical or syntax errors, run program
+        else {
+            //Starting statement
+            println!("   Lexical and Syntax analysis passed */");
+
+            let mut count = 1;
+            for element in &tokens {
+                print!("{}", count);
+                print!(": ");
+                println!("{}", element); 
+                count = count + 1;
+            }
+            println!("Vector Size: {}", tokens.len());
+        }
     }
     else {
         println!("Program failed. Please enter a valid command.");
