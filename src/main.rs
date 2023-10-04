@@ -41,15 +41,14 @@ fn main() {
         || current_char == '@' || current_char == '#'
         || current_char == '$' || current_char == '%'
         || current_char == '^' || current_char == '&'
-        || current_char == '*' || current_char == '-'
+        || current_char == '*' || current_char == ';'
         || current_char == '_' || current_char == '~'
         || current_char == '+' || current_char == '|'
         || current_char == '\\' || current_char == '\''
         || current_char == '/' || current_char == '?'
         || current_char == '<' || current_char == '>'
         || current_char == '[' || current_char == ']'
-        || current_char == '{' || current_char == '}' 
-        || current_char == ';' {
+        || current_char == '{' || current_char == '}' {
             l_error = true;
             break;
         }
