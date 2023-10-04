@@ -48,7 +48,8 @@ fn main() {
         || current_char == '/' || current_char == '?'
         || current_char == '<' || current_char == '>'
         || current_char == '[' || current_char == ']'
-        || current_char == '{' || current_char == '}' {
+        || current_char == '{' || current_char == '}' 
+        || current_char == ';' {
             l_error = true;
             break;
         }
@@ -92,7 +93,7 @@ fn main() {
                 period.push(current_char);
                 temp_vec.push(period);
             }
-            //Checks if character is a left paranthesis
+            //Checks if character is a left parenthesis
             else if current_char == '(' && quote_count == 2 {
                 if temp_word.len() != 0 {
                     temp_vec.push(temp_word);
@@ -158,74 +159,100 @@ fn main() {
             }
         }
     }
-        
+    
+    //Index of temp_vec
     let mut index = 0;
+    //For loop that goes through temp_vec, generates tokens based off of the element in temp_vec, and pushes token to tokens vector
     for element in &temp_vec {
+        //Checks if element in temp_vec is "data", generates DATA token
         if element == "data" {
             tokens.push("DATA".to_string());
         }
+        //Checks if element in temp_vec is "input", generates INPUT token
         else if element == "input" {
             tokens.push("INPUT".to_string());
         }
+        //Checks if element in temp_vec is "process", generates PROCESS token
         else if element == "process" {
             tokens.push("PROCESS".to_string());
         }
+        //Checks if element in temp_vec is "output", generates OUTPUT token
         else if element == "output" {
             tokens.push("OUTPUT".to_string());
         }
+        //Checks if element in temp_vec is "end", generates END token
         else if element == "end" {
             tokens.push("END".to_string());
         }
+        //Checks if element in temp_vec is "true", generates TRUE token
         else if element == "true" {
             tokens.push("TRUE".to_string());
         }
+        //Checks if element in temp_vec is "false", generates FALSE token
         else if element == "false" {
             tokens.push("FALSE".to_string());
         }
+        //Checks if element in temp_vec is "read", generates READ token
         else if element == "read" {
             tokens.push("READ".to_string());
         }
+        //Checks if element in temp_vec is a colon, generates COLON token
         else if element == ":" {
             tokens.push("COLON".to_string());
         }
+        //Checks if element in temp_vec is a comma, generates COMMA token
         else if element == "," {
             tokens.push("COMMA".to_string());
         }
+        //Checks if element in temp_vec is a period, generates PERIOD token
         else if element == "." {
             tokens.push("PERIOD".to_string());
         }
+        //Checks if element in temp_vec is a left parenthesis, generates LPAREN token
         else if element == "(" {
             tokens.push("LPAREN".to_string());
         }
+        //Checks if element in temp_vec is a right parenthesis, generates RPAREN token
         else if element == ")" {
             tokens.push("RPAREN".to_string());
         }
+        //Checks if element in temp_vec is an equals sign, generates ASSIGN token
         else if element == "=" {
             tokens.push("ASSIGN".to_string());
         }
+        //Checks if element in temp_vec is "vector", generates VECTOR token
         else if element == "vector" {
             tokens.push("VECTOR".to_string());
         }
+        //Checks if element in temp_vec is "number", generates NUMBER token
         else if element == "number" {
             tokens.push("NUMBER".to_string());
         }
+        //Checks if element in temp_vec is "regressiona", generates REGRESSIONA token
         else if element == "regressiona" {
             tokens.push("REGRESSIONA".to_string());
         }
+        //Checks if element in temp_vec is "regressionb", generates REGRESSIONB token
         else if element == "regressionb" {
             tokens.push("REGRESSIONB".to_string());
         }
+        //Checks if element in temp_vec is "mean", generates MEAN token
         else if element == "mean" {
             tokens.push("MEAN".to_string());
         }
+        //Checks if element in temp_vec is "stddev", generates STDDEV token
         else if element == "stddev" {
             tokens.push("STDDEV".to_string());
         }
+        //Checks if element in temp_vec is "correlation", generates CORRELATION token
         else if element == "correlation" {
             tokens.push("CORRELATION".to_string());
         }
+        //Checks for the remaining tokens
         else {
+            //Goes through temp_vec element characters
             for c in element.chars() {
+                //Checks if element in temp_vec is a number, generates NUM token
                 if c.is_numeric() {
                     let mut num: String = "NUM ".to_owned();
                     let add: &str = element;
@@ -233,6 +260,7 @@ fn main() {
                     tokens.push(num);
                     break;
                 }
+                //Checks if element in temp_vec is a string, generates STRING token
                 else if c == '\"' {
                     let mut string: String = "STRING ".to_owned();
                     let add: &str = element;
@@ -240,6 +268,7 @@ fn main() {
                     tokens.push(string);
                     break;
                 }
+                //Checks for ids, generates ID token
                 else {
                     let mut id: String = "ID ".to_owned();
                     let add: &str = element;
@@ -249,6 +278,7 @@ fn main() {
                 }
             }
         }
+        //Increases temp_vec index by one
         index = index + 1;
     }
     //=======================TOKEN GENERATING=======================\\
@@ -287,6 +317,7 @@ fn main() {
             println!("Vector Size: {}", tokens.len());
         }
     }
+    //Checks if the program is to be written in prolog
     else if language == "-p" {
         //Processing file statement
         println!("/* processing input file {}", file_name);
@@ -314,6 +345,7 @@ fn main() {
             println!("Vector Size: {}", tokens.len());
         }
     }
+    //Prompts user to enter valid command line argument if not valid
     else {
         println!("Program failed. Please enter a valid command.");
     }
