@@ -18,7 +18,7 @@ fn main() {
 
     //Lexical and syntax error booleans
     let mut l_error = false;
-    let s_error = false;
+    let mut s_error = false;
 
 
     // Read a file in the local file system
@@ -159,8 +159,6 @@ fn main() {
         }
     }
     
-    //Index of temp_vec
-    let mut index = 0;
     //For loop that goes through temp_vec, generates tokens based off of the element in temp_vec, and pushes token to tokens vector
     for element in &temp_vec {
         //Checks if element in temp_vec is "data", generates DATA token
@@ -277,17 +275,122 @@ fn main() {
                 }
             }
         }
-        //Increases temp_vec index by one
-        index = index + 1;
     }
     //=======================TOKEN GENERATING=======================\\
 
 
     //=====================SYNTAX ERROR CHECKING=====================\\
+    //Token vector index
+    let mut t_index = 0;
+    //Checks if while loop is done
+    let mut done = false;
 
+    //Checks if the DATA token is in the right place. If it isn't, returns a syntax error
+    if tokens.get(t_index).expect("REASON").to_string() != "DATA" {
+        s_error = true;
+    }
+    else {
+        t_index = t_index + 1;
+    }
+    if tokens.get(t_index).expect("REASON").to_string() != "COLON" {
+        s_error = true;
+    }
+    else {
+        t_index = t_index + 1;
+    }
+
+    //First while loop that goes through the tokens vector until it reaches either the INPUT, PROCESS, or OUTPUT tokens
+    while !done {
+        if tokens.get(t_index).expect("REASON").to_string() == "INPUT" {
+            done = true;
+        }
+        else if tokens.get(t_index).expect("REASON").to_string() == "PROCESS" {
+            done = true;
+        }
+        else if tokens.get(t_index).expect("REASON").to_string() == "OUTPUT" {
+            done = true;
+        }
+        else {
+            t_index = t_index + 1;
+        }
+    }
+
+    //Checks if the INPUT token is in the right place. If it isn't, returns a syntax error
+    if tokens.get(t_index).expect("REASON").to_string() != "INPUT" {
+        s_error = true;
+    }
+    else {
+        t_index = t_index + 1;
+    }
+    if tokens.get(t_index).expect("REASON").to_string() != "COLON" {
+        s_error = true;
+    }
+    else {
+        t_index = t_index + 1;
+    }
+
+    //Second while loop that goes through the tokens vector until it reaches either the INPUT, PROCESS, or OUTPUT tokens
+    done = false;
+    while !done {
+        if tokens.get(t_index).expect("REASON").to_string() == "INPUT" {
+            done = true;
+        }
+        else if tokens.get(t_index).expect("REASON").to_string() == "PROCESS" {
+            done = true;
+        }
+        else if tokens.get(t_index).expect("REASON").to_string() == "OUTPUT" {
+            done = true;
+        }
+        else {
+            t_index = t_index + 1;
+        }
+    }
+
+    //Checks if the PROCESS token is in the right place. If it isn't, returns a syntax error
+    if tokens.get(t_index).expect("REASON").to_string() != "PROCESS" {
+        s_error = true;
+    }
+    else {
+        t_index = t_index + 1;
+    }
+    if tokens.get(t_index).expect("REASON").to_string() != "COLON" {
+        s_error = true;
+    }
+    else {
+        t_index = t_index + 1;
+    }
+    
+    //Third while loop that goes through the tokens vector until it reaches either the INPUT, PROCESS, or OUTPUT tokens
+    done = false;
+    while !done {
+        if tokens.get(t_index).expect("REASON").to_string() == "INPUT" {
+            done = true;
+        }
+        else if tokens.get(t_index).expect("REASON").to_string() == "PROCESS" {
+            done = true;
+        }
+        else if tokens.get(t_index).expect("REASON").to_string() == "OUTPUT" {
+            done = true;
+        }
+        else {
+            t_index = t_index + 1;
+        }
+    }
+
+    //Checks if the OUTPUT token is in the right place. If it isn't, returns a syntax error
+    if tokens.get(t_index).expect("REASON").to_string() != "OUTPUT" {
+        s_error = true;
+    }
+    else {
+        t_index = t_index + 1;
+    }
+    if tokens.get(t_index).expect("REASON").to_string() != "COLON" {
+        s_error = true;
+    }
     //=====================SYNTAX ERROR CHECKING=====================\\
 
 
+    //========================RUNNING PROGRAM========================\\
     //Checks if the program is to be written in scheme
     if language == "-s" {
         //Processing file statement
@@ -348,4 +451,5 @@ fn main() {
     else {
         println!("Program failed. Please enter a valid command.");
     }
+    //========================RUNNING PROGRAM========================\\
 }
