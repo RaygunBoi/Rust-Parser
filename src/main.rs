@@ -393,6 +393,8 @@ fn main() {
     //========================RUNNING PROGRAM========================\\
     //Checks if the program is to be written in scheme
     if language == "-s" {
+        //Beginning prompt
+        println!("prompt> cargo run {} {}", file_name, language);
         //Processing file statement
         println!("; processing input file {}", file_name);
 
@@ -409,32 +411,40 @@ fn main() {
             //Starting statement
             println!("; Lexical and Syntax analysis passed");
 
+            //Booleans that check for input, process, and output
             let mut is_input = false;
             let mut is_process = false;
             let mut is_output = false;
 
+            //Return values for input, process, and output
             let mut return_i = String::from("(define ");
             let mut return_p = String::from("(define");
             let mut return_o = String::from("(display");
 
+            //For loop that goes through the tokens vector
             for element in &tokens {
+                //If statements that checks if the current token is INPUT
                 if element == "INPUT" {
                     is_input = true;
                     is_process = false;
                     is_output = false;
                 }
+                //If statements that checks if the current token is PROCESS
                 else if element == "PROCESS" {
                     is_input = false;
                     is_process = true;
                     is_output = false;
                 }
+                //If statements that checks if the current token is OUTPUT
                 else if element == "OUTPUT" {
                     is_input = false;
                     is_process = false;
                     is_output = true;
                 }
 
+                //If statement which checks that if the current token is INPUT, perform the following actions
                 if is_input {
+                    //If the current token is ID, add the token's lexeme to the output statement return_i
                     if element.contains("ID ") {
                         for c in element.chars() {
                             if c.is_lowercase() && !c.is_whitespace() {
@@ -442,9 +452,11 @@ fn main() {
                             }
                         }
                     }
+                    //If the current token is READ, add "read-csv" to the output statement return_i
                     else if element == "READ" {
                         return_i.push_str(" (read-csv \"");
                     }
+                    //If the current token is STRING, add the token's lexeme to the output statement return_i
                     else if element.contains("STRING ") {
                         return_i.push_str("./");
                         for c in element.chars() {
@@ -454,12 +466,15 @@ fn main() {
                         }
                         return_i.push_str("\" ");
                     }
+                    //If the current token is TRUE, add "#t" to the output statement return_i
                     else if element == "TRUE" {
                         return_i.push_str("#t ");
                     }
+                    //If the current token is FALSE, add "#f" to the output statement return _i
                     else if element == "FALSE" {
                         return_i.push_str("#f ");
                     }
+                    //If the current token is NUM, add the token's lexeme to the output statement return_i
                     else if element.contains("NUM ") {
                         for c in element.chars() {
                             if c.is_numeric() && !c.is_whitespace() {
@@ -467,13 +482,16 @@ fn main() {
                             }
                         }
                     }
+                    //If the current token is RPAREN, add "))" to the output statement return_i, output return_i, and reset return_i
                     else if element == "RPAREN" {
                         return_i.push_str("))");
                         println!("{}", return_i);
                         return_i = String::from("(define ");
                     }
                 }
+                //If statement which checks that if the current token is PROCESS, perform the following actions
                 else if is_process {
+                    //If the current token is ID, add the token's lexeme to the output statement return_p
                     if element.contains("ID ") {
                         return_p.push_str(" ");
                         for c in element.chars() {
@@ -482,39 +500,49 @@ fn main() {
                             }
                         }
                     }
+                    //If the current token is REGRESSIONA, add "regressiona" to the output statement return_p
                     else if element == "REGRESSIONA" {
                         return_p.push_str(" (regressiona");
                     }
+                    //If the current token is REGRESSIONB, add "regressionb" to the output statement return_p
                     else if element == "REGRESSIONB" {
                         return_p.push_str(" (regressionb");
                     }
+                    //If the current token is CORRELATION, add "correlation" to the output statement return_p
                     else if element == "CORRELATION" {
                         return_p.push_str(" (correlation");
                     }
+                    //If the current token is MEAN, add "mean" to the output statement return_p
                     else if element == "MEAN" {
                         return_p.push_str(" (mean");
                     }
+                    //If the current token is STDDEV, add "stddev" to the output statement return_p
                     else if element == "STDDEV" {
                         return_p.push_str(" (stddev");
                     }
+                    //If current token is RPAREN, add "))" to the output statement return_p, output return_p, and reset return_p
                     else if element == "RPAREN" {
                         return_p.push_str("))");
                         println!("{}", return_p);
                         return_p = String::from("(define");
                     }
                 }
+                //If statement which checks that if the current token is OUTPUT, perform the following actions
                 else if is_output {
+                    //If the current token is STRING, add the token's lexeme to the output statement return_o
                     if element.contains("STRING ") {
                         for c in element.chars() {
                             if c.is_lowercase() || c.is_whitespace() || c == '\"' || c == '=' {
                                 return_o.push(c);
                             }
                         }
+                        //Outputs and resets return_o
                         return_o.push(')');
                         println!("{}", return_o);
                         println!("(newline)");
                         return_o = String::from("(display");
                     }
+                    //If the current token is STRING, add the token's lexeme to the output statement return_o
                     else if element.contains("ID ") {
                         return_o.push_str(" ");
                         for c in element.chars() {
@@ -522,6 +550,7 @@ fn main() {
                                 return_o.push(c);
                             }
                         }
+                        //Outputs and resets return_o
                         return_o.push(')');
                         println!("{}", return_o);
                         println!("(newline)");
@@ -533,6 +562,8 @@ fn main() {
     }
     //Checks if the program is to be written in prolog
     else if language == "-p" {
+        //Beginning prompt
+        println!("prompt> cargo run {} {}", file_name, language);
         //Processing file statement
         println!("/* processing input file {}", file_name);
 
@@ -548,13 +579,179 @@ fn main() {
         else {
             //Starting statement
             println!("   Lexical and Syntax analysis passed */");
+            println!("");
+            println!("main :-");
 
-            let mut count = 1;
-            for element in &temp_vec {
-                print!("{}", count);
-                print!(": ");
-                println!("{}", element); 
-                count = count + 1;
+            //Booleans that check for input, process, and output
+            let mut is_input = false;
+            let mut is_process = false;
+            let mut is_output = false;
+
+            //Return values for input, process, and output
+            let mut return_i = String::from("load_data_column(\'file.csv\', ");
+            let mut return_p = String::from("");
+            let mut return_o = String::from("writeln(");
+
+            //Stores Data values
+            let mut datas: Vec<String> = Vec::new();
+            //Stres ID value
+            let mut the_id = String::from("");
+
+            //For loop that goes through the tokens vector
+            for element in &tokens {
+                //If statement that checks if the current token is INPUT
+                if element == "INPUT" {
+                    is_input = true;
+                    is_process = false;
+                    is_output = false;
+                }
+                //If statement that checks if the current token is PROCESS
+                else if element == "PROCESS" {
+                    is_input = false;
+                    is_process = true;
+                    is_output = false;
+                }
+                //If statement that checks if the current token is OUTPUT
+                else if element == "OUTPUT" {
+                    is_input = false;
+                    is_process = false;
+                    is_output = true;
+                }
+
+                //If statement which checks that if the current token is INPUT, perform the following actions
+                if is_input {
+                    //If the current token is TRUE, adds "true" to the output statement return_i
+                    if element == "TRUE" {
+                        return_i.push_str("true, ");
+                    }
+                    //If the current token is FALSE, adds "false" to the output statement return_i
+                    else if element == "FALSE" {
+                        return_i.push_str("false, ");
+                    }
+                    //If the current token is NUM, create a new string called "Data" with the token's lexeme
+                    else if element.contains("NUM ") {
+                        let mut data_string = String::from("Data");
+                        for c in element.chars() {
+                            //Pushes the Data string to the datas vector
+                            if c.is_numeric() && !c.is_whitespace() {
+                                return_i.push(c);
+                                data_string.push(c);
+                            }
+                        }
+                        //Adds the Data string (with the token's lexeme) to the output statement return_i
+                        return_i.push_str(", ");
+                        return_i.push_str(&data_string);
+                        datas.push(data_string);
+                    }
+                    //If the current token is RPAREN, add ")" to the output statement return_i, output return_i, and reset return_i
+                    else if element == "RPAREN" {
+                        return_i.push_str("),");
+                        println!("{}", return_i);
+                        return_i = String::from("load_data_column(\'file.csv\', ");
+                    }
+                }
+                //If statement which checks that if the current token is PROCESS, perform the following actions
+                else if is_process {
+                    //If the current token is ID, add the token's lexeme to the_id
+                    if element.contains("ID ") {
+                        for c in element.chars() {
+                            if c.is_lowercase() && !c.is_whitespace() {
+                                the_id.push(c.to_ascii_uppercase());
+                            }
+                        }
+                    }
+                    //If the current token is REGRESSIONA, add "regressiona", the values in datas, and the_id to the output statement return_p
+                    else if element == "REGRESSIONA" {
+                        return_p.push_str("regressiona(");
+                        for d_element in &datas {
+                            return_p.push_str(&d_element);
+                            return_p.push_str(", ");
+                        }
+                        return_p.push_str(&the_id);
+                    }
+                    //If the current token is REGRESSIONB, add "regressionb", the values in datas, and the_id to the output statement return_p
+                    else if element == "REGRESSIONB" {
+                        return_p.push_str("regressionb(");
+                        for d_element in &datas {
+                            return_p.push_str(&d_element);
+                            return_p.push_str(", ");
+                        }
+                        return_p.push_str(&the_id);
+                    }
+                    //If the current token is CORRELATION, add "correlation", the values in datas, and the_id to the output statement return_p
+                    else if element == "CORRELATION" {
+                        return_p.push_str("correlation(");
+                        for d_element in &datas {
+                            return_p.push_str(&d_element);
+                            return_p.push_str(", ");
+                        }
+                        return_p.push_str(&the_id);
+                    }
+                    //If the current token is MEAN, add "mean", the values in datas, and the_id to the output statement return_p
+                    else if element == "MEAN" {
+                        return_p.push_str("mean(");
+                        for d_element in &datas {
+                            return_p.push_str(&d_element);
+                            return_p.push_str(", ");
+                        }
+                        return_p.push_str(&the_id);
+                    }
+                    //If the current token is STDDEV, add "stddev", the values in datas, and the_id to the output statement return_p
+                    else if element == "STDDEV" {
+                        return_p.push_str("stddev(");
+                        for d_element in &datas {
+                            return_p.push_str(&d_element);
+                            return_p.push_str(", ");
+                        }
+                        return_p.push_str(&the_id);
+                    }
+                    //If the current token is LPAREN, add ")" to the output statement return_p, output return_p, and reset return_p
+                    else if element == "LPAREN" {
+                        return_p.push_str("),");
+                        println!("{}", return_p);
+                        return_p = String::from("");
+                    }
+                    //Resets the_id
+                    else if element == "COMMA" {
+                        the_id = String::from("");
+                    }
+                }
+                //If statement which checks that if the current token is OUTPUT, perform the following actions
+                else if is_output {
+                    //If the current token is STRING, add the token's lexeme to the output statement return_o
+                    if element.contains("STRING ") {
+                        let mut quote_count = 0;
+                        for c in element.chars() {
+                            if quote_count > 6 {
+                                if c.is_lowercase() || c.is_whitespace() || c == '\"' || c == '=' {
+                                    return_o.push(c);
+                                }
+                            }
+                            else {
+                                quote_count = quote_count + 1;
+                            }
+                        }
+                    }
+                    //If the current token is ID, add the token's lexeme to the output statement return_o
+                    else if element.contains("ID ") {
+                        for c in element.chars() {
+                            if c.is_lowercase() && !c.is_whitespace() {
+                                return_o.push(c.to_ascii_uppercase());
+                            }
+                        }
+                    }
+                    //If the current token is COMMA, add the ")" to the output statement return_o, output return_o, and reset return_o
+                    else if element == "COMMA" {
+                        return_o.push_str("),");
+                        println!("{}", return_o);
+                        return_o = String::from("writeln(");
+                    }
+                    //If the current token is PERIOD, add the "." to the output statement return_o, output return_o, and reset return_o
+                    else if element == "PERIOD" {
+                        return_o.push_str(").");
+                        println!("{}", return_o);
+                    }
+                }
             }
         }
     }
