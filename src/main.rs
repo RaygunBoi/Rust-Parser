@@ -460,7 +460,7 @@ fn main() {
                     else if element.contains("STRING ") {
                         return_i.push_str("./");
                         for c in element.chars() {
-                            if c.is_lowercase() && !c.is_whitespace() && c != '\"' {
+                            if c.is_lowercase() && !c.is_whitespace() && c != '\"' || c == '-' || c == '.' {
                                 return_i.push(c);
                             }
                         }
@@ -588,7 +588,7 @@ fn main() {
             let mut is_output = false;
 
             //Return values for input, process, and output
-            let mut return_i = String::from("load_data_column(\'file.csv\', ");
+            let mut return_i = String::from("load_data_column(");
             let mut return_p = String::from("");
             let mut return_o = String::from("writeln(");
 
@@ -620,8 +620,18 @@ fn main() {
 
                 //If statement which checks that if the current token is INPUT, perform the following actions
                 if is_input {
+                    //If the current token is STRING, add the token's lexeme to the output statement return_i
+                    if element.contains("STRING ") {
+                        return_i.push_str("\'");
+                        for c in element.chars() {
+                            if c.is_lowercase() && !c.is_whitespace() && c != '\"' || c == '-' || c == '.' {
+                                return_i.push(c);
+                            }
+                        }
+                        return_i.push_str("\', ");
+                    }
                     //If the current token is TRUE, adds "true" to the output statement return_i
-                    if element == "TRUE" {
+                    else if element == "TRUE" {
                         return_i.push_str("true, ");
                     }
                     //If the current token is FALSE, adds "false" to the output statement return_i
@@ -647,7 +657,7 @@ fn main() {
                     else if element == "RPAREN" {
                         return_i.push_str("),");
                         println!("{}", return_i);
-                        return_i = String::from("load_data_column(\'file.csv\', ");
+                        return_i = String::from("load_data_column(");
                     }
                 }
                 //If statement which checks that if the current token is PROCESS, perform the following actions
