@@ -409,14 +409,126 @@ fn main() {
             //Starting statement
             println!("; Lexical and Syntax analysis passed");
 
-            let mut count = 1;
+            let mut is_input = false;
+            let mut is_process = false;
+            let mut is_output = false;
+
+            let mut return_i = String::from("(define ");
+            let mut return_p = String::from("(define");
+            let mut return_o = String::from("(display");
+
             for element in &tokens {
-                print!("{}", count);
-                print!(": ");
-                println!("{}", element); 
-                count = count + 1;
+                if element == "INPUT" {
+                    is_input = true;
+                    is_process = false;
+                    is_output = false;
+                }
+                else if element == "PROCESS" {
+                    is_input = false;
+                    is_process = true;
+                    is_output = false;
+                }
+                else if element == "OUTPUT" {
+                    is_input = false;
+                    is_process = false;
+                    is_output = true;
+                }
+
+                if is_input {
+                    if element.contains("ID ") {
+                        for c in element.chars() {
+                            if c.is_lowercase() && !c.is_whitespace() {
+                                return_i.push(c);
+                            }
+                        }
+                    }
+                    else if element == "READ" {
+                        return_i.push_str(" (read-csv \"");
+                    }
+                    else if element.contains("STRING ") {
+                        return_i.push_str("./");
+                        for c in element.chars() {
+                            if c.is_lowercase() && !c.is_whitespace() && c != '\"' {
+                                return_i.push(c);
+                            }
+                        }
+                        return_i.push_str("\" ");
+                    }
+                    else if element == "TRUE" {
+                        return_i.push_str("#t ");
+                    }
+                    else if element == "FALSE" {
+                        return_i.push_str("#f ");
+                    }
+                    else if element.contains("NUM ") {
+                        for c in element.chars() {
+                            if c.is_numeric() && !c.is_whitespace() {
+                                return_i.push(c);
+                            }
+                        }
+                    }
+                    else if element == "RPAREN" {
+                        return_i.push_str("))");
+                        println!("{}", return_i);
+                        return_i = String::from("(define ");
+                    }
+                }
+                else if is_process {
+                    if element.contains("ID ") {
+                        return_p.push_str(" ");
+                        for c in element.chars() {
+                            if c.is_lowercase() && !c.is_whitespace() {
+                                return_p.push(c);
+                            }
+                        }
+                    }
+                    else if element == "REGRESSIONA" {
+                        return_p.push_str(" (regressiona");
+                    }
+                    else if element == "REGRESSIONB" {
+                        return_p.push_str(" (regressionb");
+                    }
+                    else if element == "CORRELATION" {
+                        return_p.push_str(" (correlation");
+                    }
+                    else if element == "MEAN" {
+                        return_p.push_str(" (mean");
+                    }
+                    else if element == "STDDEV" {
+                        return_p.push_str(" (stddev");
+                    }
+                    else if element == "RPAREN" {
+                        return_p.push_str("))");
+                        println!("{}", return_p);
+                        return_p = String::from("(define");
+                    }
+                }
+                else if is_output {
+                    if element.contains("STRING ") {
+                        for c in element.chars() {
+                            if c.is_lowercase() || c.is_whitespace() || c == '\"' || c == '=' {
+                                return_o.push(c);
+                            }
+                        }
+                        return_o.push(')');
+                        println!("{}", return_o);
+                        println!("(newline)");
+                        return_o = String::from("(display");
+                    }
+                    else if element.contains("ID ") {
+                        return_o.push_str(" ");
+                        for c in element.chars() {
+                            if c.is_lowercase() && !c.is_whitespace() {
+                                return_o.push(c);
+                            }
+                        }
+                        return_o.push(')');
+                        println!("{}", return_o);
+                        println!("(newline)");
+                        return_o = String::from("(display");
+                    }
+                }
             }
-            println!("Vector Size: {}", tokens.len());
         }
     }
     //Checks if the program is to be written in prolog
@@ -438,13 +550,12 @@ fn main() {
             println!("   Lexical and Syntax analysis passed */");
 
             let mut count = 1;
-            for element in &tokens {
+            for element in &temp_vec {
                 print!("{}", count);
                 print!(": ");
                 println!("{}", element); 
                 count = count + 1;
             }
-            println!("Vector Size: {}", tokens.len());
         }
     }
     //Prompts user to enter valid command line argument if not valid

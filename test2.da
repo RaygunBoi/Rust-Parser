@@ -9,7 +9,7 @@ input:
 process:
    a = regressiona(xval, yval),
    b = regressionb(xval, yval),
-   themean = mean(xval, yval), thevar : stddev(xval, yval)
+   themean = mean(xval, yval), thevar = stddev(xval, yval)
 output:
    "value of a = ", a,
    "value of b = ", b,
