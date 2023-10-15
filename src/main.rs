@@ -393,8 +393,6 @@ fn main() {
     //========================RUNNING PROGRAM========================\\
     //Checks if the program is to be written in scheme
     if language == "-s" {
-        //Beginning prompt
-        println!("prompt> cargo run {} {}", file_name, language);
         //Processing file statement
         println!("; processing input file {}", file_name);
 
@@ -562,8 +560,6 @@ fn main() {
     }
     //Checks if the program is to be written in prolog
     else if language == "-p" {
-        //Beginning prompt
-        println!("prompt> cargo run {} {}", file_name, language);
         //Processing file statement
         println!("/* processing input file {}", file_name);
 
