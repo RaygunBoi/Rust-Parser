@@ -28,7 +28,7 @@ prompt>cargo run input.da -s
 (display r)
 (newline)
 prompt>
-
+```
 Given the following program written in this language:
 ```
 data:
