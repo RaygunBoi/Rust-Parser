@@ -1,14 +1,5 @@
-[![Review Assignment Due Date](https://classroom.github.com/assets/deadline-readme-button-24ddc0f5d75046c5622901739e7c5dd533143b0c8e959d652212380cedb1ea36.svg)](https://classroom.github.com/a/1qNXzPQT)
-# Rust Programming Assignment: Pico Data Analysis Tool
-
-## Motivation
-Rust is becoming a popular language. It was created to have high performance, reliability and productivity. The code is compiled and it claims to have advanced optimizations that produce stable and efficient programs. It has concurrent abilities, it provides memory safety without a runtime garbage collector.
-
-This project consists in the development of the front end of a compiler. By programming the Lexical Analyzer (Scanner) and Syntax Analyzer (Parser) for the Data-Analysis (DA) grammar you will gain further understanding of the lexical analysis and the production of tokens needed for the Syntax Analyzer (Parser), and how to consume those tokens by the Parser to verify that the syntax is correct.
-
-
 ## Description
-Write a program in Rust that takes a program written in DA, and outputs:
+In Rust, this program takes another program written in DA, and outputs:
 1. If the program has lexical or syntax errors, the error that was found. Use "hide the head in the sand, like an ostrich" version of error handling.
 1. If the program is OK, depending on a command line flag the program will produce:
    1.	If the flag is `-s` the program will output a code in Scheme that is going to be called by a program in Scheme that will execute the operations specified in the program.
@@ -37,73 +28,6 @@ prompt>cargo run input.da -s
 (display r)
 (newline)
 prompt>
-```
-
-## Grammar
-
-```
-PROGRAM     -->   data:
-                     DATADEFS
-                  input:
-                     INPUTOPS
-                  process:
-                     PROCESSOPS
-                  output:
-                     OUTPUTOPS
-                  end.
-DATADEFS    -->   DATADEF |
-                  DATADEF, DATADEFS
-DATADEF     -->   ID : TYPE
-INPUTOPS    -->   INPUTOP |
-                  INPUTOP, INPUTOPS
-INPUTOP     -->   ID = read(STRING, BOOL, NUM)
-PROCESSOPS  -->   PROCESSOP |
-                  PROCESSOP, PROCESSOPS
-PROCESSOP   -->   ID = regressiona(ID, ID) |
-                  ID = regressionb(ID, ID) |
-                  ID = mean(ID) |
-                  ID = stddev(ID) |
-                  ID = correlation(ID, ID)
-OUTPUTOPS   -->   OUTPUTOP |
-                  OUTPUTOP, | OUTPUTOPS
-OUTPUTOP    -->   STRING |
-                  ID
-ID          -->   LETTER+
-TYPE        -->   vector | number
-BOOL        -->   true | false
-STRING      -->   "LETTER+"
-NUM         -->   DIGIT+
-LETTER      -->   a | b | c | d | e | f | g | ... | z
-DIGIT       -->   0 | 1 | 2 | 3 | 4 | 5 | 6 | ... | 9
-```
-
-The tokens of this grammar are (some lexemes shown as examples):
-| Token | Lexeme |
-| ----- | ------ |
-| `DATA` | `data` |
-| `INPUT` | `input` |
-| `PROCESS` | `process` |
-| `OUTPUT` | `output` |
-| `END` | `end` |
-| `ID` | `alpha` |
-| `NUM` |  `256` |
-| `true` | `true` |
-| `false` | `false` |
-| `READ` | `read` |
-| `COLON` | `:` |
-| `COMMA` | `,` |
-| `PERIOD` | `.` |
-| `LPAREN` | `(` |
-| `RPAREN` | `)` |
-| `ASSIGN` | `=` |
-| `VECTOR` | `vector` |
-| `NUMBER` | `number` |
-| `REGRESSIONA` | `regressiona` |
-| `REGRESSIONB` | `regressionb` |
-| `MEAN` | `mean` |
-| `STDDEV` | `stddev` |
-| `CORRELATION` | `correlation` |
-| `STRING` | `"the value"` |
 
 Given the following program written in this language:
 ```
@@ -218,8 +142,6 @@ The tokens that it would generate are:
 86. END
 87. PERIOD
 
-Notice that the ID, NUM, and STRING tokens have their lexeme associated. Also notice that in the language the elements do not need to be separated by space, but they could.
-
 ## How to run the program
 
 ### Scheme Output
@@ -269,58 +191,3 @@ main :-
    writeln(R).
 
 ```
-
-### Note about the Output
-You are not expected to output the list of tokens. You can do it to check your work, but remember to remove them from the output before submitting your final version.
-
-Later we will redirect the output to Scheme and Prolog programs respectively.
-
-## Assignment Requirements
-- Good programming practices
-  - Indentation
-  - Meaningful identifier naming
-  - Consistent variable naming convention
-  - Clean code, This means remove commented code that you are not using, and make sure that you are using appropriate and professional vocabulary in your variables and comments.
-  - Commented code
-- This activity is strictly individual
-
-## Delivery
-You will use this repository and commit and push to it. Remember to push your last version before the deadline.
-What files should be in your repository:
-- `src/main.rs` Source code in Rust for your lexical and syntax analysis
-- `test0.da`, `test1.da`, `test2.da`, `test3.da`, `test4.da`, `test5.da` the test files provided for you to test. Notice that `test4.da` has a lexical error and `test5.sdac` has a syntax error.
-
-You may use more source code files. Actually, you are encouraged to create modules for your assignment.
-
-## Assessment and Grading
-Assessment will consider the following factors in the grading of this assignment:
--	Good programming practices
--	Your program will be tested with the five test programs that were provided and some others that will be made to test, some with lexical errors, some with syntax errors, some without any errors.
--	Adherence to instructions
--	Correct function of the program, that is, the program behaves correctly.
--	No runtime errors (on any input!) *Remember the command line parameters!*
--	Late deliveries will have a zero mark
--	Plagiarism will have a double zero mark (in addition to losing 10% of your final grade, the person that plagiarizes will lose an additional 10% of their final grade), and there will be a report filed in the students’ academic record.
-- Remember that you will be assessed about this assignment in the course tests, so work on this conscientiously.
-
-## Extra Challenge
-
-Create an additional file with a decorated (Tokens with Lexemes on the Leafs) parse tree. The file should be named like the input file but with the extension `.pt` (stands for parse tree), for instance if the input file is `test1.da` the parse tree should be in file `test1.pt`. You are allowed to create an HTML file, or any **standard** format that can be visualized by a Firefox browser.
-
-
-**NOTE**
-You just need to report the first error that you find (that is what "ostrich" version means), if you find a lexical error, report it and stop the program, if the program passes the lexical analysis, if it finds a syntax error, report it and stop the program. If the program passes both the lexical and syntax analyzers then proceed to generate the code.
-
-> Hiding the head in the Sand. [Here](https://www.phrases.org.uk/meanings/bury-your-head-in-the-sand.html) you may find information about the expression that says that an "ostrich hides their head in the sand." Basically, in this context it means that if you are executing an operation that has many steps, and one of those steps fails, the whole thing comes to a stop. It is also called "panic resolution," however, I decided not to use it because students think that I mean that they should call the `panic`  function.
-
-
-## Academic Integrity
-This programming assignment is to be done on an individual basis. At the same time, it is understood that learning from your peers is valid and you are encouraged to talk among yourselves about programming in general and current assignments in particular.  Keep in mind, however, that each individual student must do the work in order to learn.  Hence, the following guidelines are established:
-- Feel free to discuss any and all programming assignments but do not allow other students to look at or copy your code. Do not give any student an electronic or printed copy of any program you write for this class.
-- Gaining the ability to properly analyze common programming errors is an important experience. Do not deprive a fellow student of his/her opportunity to practice problem solving: control the urge to show them what to do by writing the code for them.
-- If you’ve given the assignment a fair effort and still need help, see the instructor or a lab assistant.
-- **If there is any evidence that a program or other written assignment was copied from another student, neither student will receive any credit for it. This rule will be enforced.**
-- **If there is any evidence that a program or other written assignment was copied from any source, the student will not receive any credit for it. This rule will be enforced.**
-- Protect yourself: Handle throw-away program listings carefully, keep your repository private.
-
-Refer to the ECS Department Policy on Academic Integrity that is included in the class syllabus.
